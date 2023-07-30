@@ -21,6 +21,10 @@ class Room(models.Model):
     ## snapshot initial instance
     created = models.DateField(auto_now_add=True)
 
+    # specify metadata
+    class Meta:
+        ordering = ["-updated", "-created"]
+
     ## return db info
     def __str__(self):
         return self.name
