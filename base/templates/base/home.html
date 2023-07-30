@@ -17,7 +17,7 @@
                 <!-- link room w/ messages -->
                 <span>@{{room.host.username}}</span>
                 <h5>{{room.id}} -- <a href="{% url 'room' room.id %}">{{room.name}}</h5></a>
-                <small>{{room.topic.name}}</small>
+                <small><strong>TOPIC</strong>: {{room.topic.name}}</small>
                 <br>
                 <span>--------</span>
             </div>

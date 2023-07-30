@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Room, Message
+from .forms import CreateRoomForm
 
 
 # function based views
@@ -20,5 +21,13 @@ def room(request, pk):
 
 
 def createRoom(request):
-    context = {}
+    form = CreateRoomForm()
+    if request.method == "POST":
+        # parse form data
+        form = CreateRoomForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("home")
+
+    context = {"form": form}
     return render(request, "base/room_form.html", context)
