@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Room, Message
+from .models import Room, Message, Topic
 from .forms import CreateRoomForm
 
 
@@ -7,7 +7,12 @@ from .forms import CreateRoomForm
 def home(request):
     # object model manager
     rooms = Room.objects.all()
-    context = {"rooms": rooms}
+    topics = Topic.objects.all()
+    context = {
+        "rooms": rooms,
+        "topics": topics,
+    }
+
     return render(request, "base/home.html", context)
 
 
