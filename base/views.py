@@ -5,8 +5,13 @@ from .forms import CreateRoomForm
 
 # function based views
 def home(request):
-    # object model manager
-    rooms = Room.objects.all()
+    if request.GET.get("q"):
+        q = request.GET.get("q")
+    else:
+        q = ""
+
+    # case insensitive filtering
+    rooms = Room.objects.filter(topic__name__icontains=q)
     topics = Topic.objects.all()
     context = {
         "rooms": rooms,

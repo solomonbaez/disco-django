@@ -17,19 +17,21 @@
         <h3>Topics<h3>
         <hr>
 
-        {% for topic in topics %}
+        <div>
+            <!-- route to topics -->
+            <a href="{% url 'home' %}">All Topics</a>
+        </div>
 
-            <div>
-                <!-- route to topics -->
-                <a href="{% url 'home' %}?q={{topic.name}}">{{topic.name}}</a>
-            </div>
-        
+        {% for topic in topics %}
+        <div>
+            <!-- route to topics -->
+            <a href="{% url 'home' %}?q={{topic.name}}">{{topic.name}}</a>
+        </div>
         {% endfor %}
     </div> 
 
     <div>
         <a href="{% url 'create-room' %}">New Room</a>
-        <hr>
 
         {% for room in rooms %}
 
