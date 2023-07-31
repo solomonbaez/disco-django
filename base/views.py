@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+
+# restriction decorator
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -27,6 +30,13 @@ def loginView(request):
 
     context = {}
     return render(request, "base/login_register.html", context)
+
+
+def logoutView(request):
+    # deletes session token
+    logout(request)
+
+    return redirect("home")
 
 
 # function based views
@@ -61,6 +71,8 @@ def room(request, pk):
     return render(request, "base/room.html", context)
 
 
+# restrict room creation by SID
+@login_required(login_url="login")
 def createRoom(request):
     form = CreateRoomForm()
     if request.method == "POST":
