@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.http import HttpResponse
 
 # restriction decorator
 from django.contrib.auth.decorators import login_required
@@ -86,25 +87,44 @@ def createRoom(request):
     return render(request, "base/room_form.html", context)
 
 
+@login_required(login_url="login")
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = CreateRoomForm(instance=room)
-    if request.method == "POST":
+
+    # prevent non-owners from updating a room
+    if request.user != room.host:
+        messages.add_message(request, messages.INFO, "You are not the host!")
+        return redirect("home")
+
+    elif request.method == "POST":
         # validate form data
         form = CreateRoomForm(request.POST, instance=room)
         if form.is_valid():
             form.save()
             return redirect("home")
 
-    context = {"form": form}
+        context = {"form": form}
 
-    return render(request, "base/room_form.html", context)
+        return render(request, "base/room_form.html", context)
 
 
+@login_required(login_url="login")
 def deleteRoom(request, pk):
     room = Room.objects.get(id=pk)
-    if request.method == "POST":
-        room.delete()
+
+    # prevent non-owners from deleting a room
+    if request.user != room.host:
+        messages.add_message(request, messages.INFO, "You are not the host!")
         return redirect("home")
 
-    return render(request, "base/room_delete.html", {"obj": room})
+    elif request.method == "POST":
+        # validate form data
+        form = CreateRoomForm(request.POST, instance=room)
+        if form.is_valid():
+            form.save()
+            return redirect("home")
+
+        context = {"form": form}
+
+        return render(request, "base/room_form.html", context)
