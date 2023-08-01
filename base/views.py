@@ -1,19 +1,46 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.http import HttpResponse
-
-# restriction decorator
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
 from .models import Room, Message, Topic
 from .forms import CreateRoomForm
 
 
-def loginView(request):
+def registerView(request):
+    page = "register"
+    form = UserCreationForm()
+
     if request.method == "POST":
-        username = request.POST.get("username")
+        form = UserCreationForm(request.POST)
+
+        if form.is_valid():
+            # commit == false -> maintain user mutability
+            user = form.save(commit=False)
+            # clean data
+            user.username = user.username.lower()
+            user.save()
+
+            login(request, user)
+            return redirect("home")
+
+        else:
+            messages.error(request, "An error occured during registration")
+
+    return render(request, "base/login_register.html", {"form": form, "page": page})
+
+
+def loginView(request):
+    page = "login"
+    # restrict login to prevent SID overflow
+    if request.user.is_authenticated:
+        return redirect("home")
+
+    elif request.method == "POST":
+        # clean and parse data
+        username = request.POST.get("username").lower()
         password = request.POST.get("password")
 
         try:
@@ -29,8 +56,7 @@ def loginView(request):
         else:
             messages.add_message(request, messages.INFO, "Failed to authenticate")
 
-    context = {}
-    return render(request, "base/login_register.html", context)
+    return render(request, "base/login_register.html", {"page": page})
 
 
 def logoutView(request):
