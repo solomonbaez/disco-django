@@ -8,3 +8,4 @@ class CreateRoomForm(ModelForm):
         model = Room
         # fetch all editable fields
         fields = "__all__"
+        exclude = ["host", "participants"]
