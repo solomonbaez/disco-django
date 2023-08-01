@@ -3,7 +3,9 @@
 
 {% for message in recent_messages %}
 <div>
-    <span>@{{message.user}} - {{message.created|timesince}}</span>
+    <span>
+        <a href="{% url 'user-profile' message.user.id%}">@{{message.user}}</a> - {{message.created|timesince}}
+    </span>
     <small>replied to "{{message.room}}"</small>
     <!-- output the str method -->
     <p>{{message}}</p>
