@@ -80,10 +80,13 @@ def home(request):
     topics = Topic.objects.all()
     room_count = rooms.count()
 
+    recent_messages = Message.objects.all().order_by("-created")[:5]
+
     context = {
         "rooms": rooms,
         "topics": topics,
         "room_count": room_count,
+        "recent_messages": recent_messages,
     }
 
     return render(request, "base/home.html", context)
@@ -165,7 +168,7 @@ def deleteRoom(request, pk):
 
 
 @login_required(login_url="login")
-def deleteMessage(request, mk, pk):
+def deleteMessage(request, mk):
     message = Message.objects.get(id=mk)
 
     if request.user != message.user:
@@ -173,6 +176,6 @@ def deleteMessage(request, mk, pk):
 
     elif request.method == "POST":
         message.delete()
-        return redirect("room", pk=pk)
+        return redirect("room", pk=message.room.id)
 
     return render(request, "base/delete.html", {"obj": message})

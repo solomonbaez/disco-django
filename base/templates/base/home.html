@@ -5,7 +5,8 @@
 <style>
     .home-container {
         display: grid;
-        grid-template-columns: 1fr 3fr;
+        /* two columns */
+        grid-template-columns: 1fr 3fr 1fr;
     }
 </style>
 
@@ -49,6 +50,19 @@
                 <hr>
             </div>
 
+        {% endfor %}
+    </div>
+
+    <div>
+        <h3>Recent Activity</h3>
+        <hr>
+
+        {% for message in recent_messages %}
+        <div>
+            <span>@{{message.user}}</span>
+            <p>{{message.body}}</p>
+            <hr>
+        </div>
         {% endfor %}
     </div>
 </div>
