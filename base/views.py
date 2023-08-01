@@ -93,9 +93,23 @@ def room(request, pk):
     room = Room.objects.get(id=pk)
 
     # query children of current room
-    room_messages = room.message_set.all()
+    room_messages = room.message_set.all().order_by("created")
 
-    context = {"room": room, "room_messages": room_messages}
+    participants = room.participants.all()
+
+    if request.method == "POST":
+        message = Message.objects.create(
+            user=request.user, room=room, body=request.POST.get("body")
+        )
+        room.participants.add(request.user)
+        # redirect to parse POST -> prevent GET conflict
+        return redirect("room", pk=room.id)
+
+    context = {
+        "room": room,
+        "room_messages": room_messages,
+        "participants": participants,
+    }
     return render(request, "base/room.html", context)
 
 
@@ -140,18 +154,25 @@ def updateRoom(request, pk):
 def deleteRoom(request, pk):
     room = Room.objects.get(id=pk)
 
-    # prevent non-owners from deleting a room
     if request.user != room.host:
         messages.add_message(request, messages.INFO, "You are not the host!")
-        return redirect("home")
 
     elif request.method == "POST":
-        # validate form data
-        form = CreateRoomForm(request.POST, instance=room)
-        if form.is_valid():
-            form.save()
-            return redirect("home")
+        room.delete()
+        return redirect("home")
 
-        context = {"form": form}
+    return render(request, "base/delete.html", {"obj": room})
 
-        return render(request, "base/room_form.html", context)
+
+@login_required(login_url="login")
+def deleteMessage(request, mk, pk):
+    message = Message.objects.get(id=mk)
+
+    if request.user != message.user:
+        messages.add_message(request, messages.INFO, "You are not the host!")
+
+    elif request.method == "POST":
+        message.delete()
+        return redirect("room", pk=pk)
+
+    return render(request, "base/delete.html", {"obj": message})

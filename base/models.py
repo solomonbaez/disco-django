@@ -15,6 +15,8 @@ class Room(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
+    # MUST reference a related name due to pre-existing user relation
+    participants = models.ManyToManyField(User, related_name="participants", blank=True)
 
     ## snapshot every instance
     updated = models.DateField(auto_now=True)
