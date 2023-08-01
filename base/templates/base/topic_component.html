@@ -1,0 +1,14 @@
+<h3>Topics<h3>
+<hr>
+
+<div>
+    <!-- route to topics -->
+    <a href="{% url 'home' %}">All Topics</a>
+</div>
+
+{% for topic in topics %}
+<div>
+    <!-- route to topics -->
+    <a href="{% url 'home' %}?q={{topic.name}}">{{topic.name}}</a>
+</div>
+{% endfor %}
