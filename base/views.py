@@ -232,3 +232,15 @@ def updateUser(request, pk):
             form.save()
             return redirect("user-profile", pk=pk)
     return render(request, "base/update-user.html", {"form": form})
+
+
+def mobileTopics(request):
+    q = request.GET.get("q") if request.GET.get("q") else ""
+    topics = Topic.objects.filter(Q(name__icontains=q))
+    return render(request, "base/topics.html", {"topics": topics})
+
+
+def mobileActivity(request):
+    q = request.GET.get("q") if request.GET.get("q") else ""
+    recent_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
+    return render(request, "base/activity.html", {"recent_messages": recent_messages})
