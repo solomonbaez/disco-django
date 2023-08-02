@@ -1,6 +1,13 @@
-from django.http import JsonResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
+# restrict requests
+@api_view(
+    [
+        "GET",
+    ]
+)
 def getRoutes(request):
     routes = [
         "GET /api",
@@ -8,4 +15,4 @@ def getRoutes(request):
         "GET /api/rooms/:id",
     ]
     # restrict to python
-    return JsonResponse(routes, safe=False)
+    return Response(routes)
