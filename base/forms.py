@@ -16,3 +16,10 @@ class UserForm(ModelForm):
     class Meta:
         model = User
         fields = ["email", "name", "username", "bio", "avatar"]
+
+
+class RegisterForm(UserCreationForm):
+    class Meta:
+        model = User
+        # password1/password2 == password/conf
+        fields = ["email", "name", "username", "password1", "password2"]

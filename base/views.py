@@ -5,15 +5,15 @@ from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from .models import User, Room, Message, Topic
-from .forms import CreateRoomForm, UserForm
+from .forms import CreateRoomForm, UserForm, RegisterForm
 
 
 def registerView(request):
     page = "register"
-    form = UserCreationForm()
+    form = RegisterForm()
 
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
 
         if form.is_valid():
             # commit == false -> maintain user mutability
@@ -39,15 +39,15 @@ def loginView(request):
 
     elif request.method == "POST":
         # clean and parse data
-        username = request.POST.get("username").lower()
+        email = request.POST.get("email").lower()
         password = request.POST.get("password")
 
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(email=email)
         except:
             messages.add_message(request, messages.INFO, "User does not exist!")
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
         if user:
             # create a new session
             login(request, user)
